@@ -1,0 +1,102 @@
+version: '3.2'
+
+networks:
+  dev-network:
+    driver: bridge
+  database-network:
+    external: true
+  traefik:
+    external: true
+
+volumes:
+  app-volume:
+
+services:
+  queue:
+    image: repo@image
+    user: 'root'
+    restart: always
+    volumes:
+      #- './conf/php-fpm.conf:/usr/local/etc/php-fpm.conf'
+      - '/etc/passwd:/etc/passwd:ro'
+      - '/etc/group:/etc/group:ro'
+      - './storage:/app/storage'
+    env_file:
+      - .env
+    command: 'php /app/artisan queue:work'
+    depends_on:
+      - redis
+    networks:
+      - dev-network
+      - database-network
+
+  cron:
+    image: repo@image
+    user: 'root'
+    restart: always
+    volumes:
+      #- './conf/php-fpm.conf:/usr/local/etc/php-fpm.conf'
+      - '/etc/passwd:/etc/passwd:ro'
+      - '/etc/group:/etc/group:ro'
+      - './storage:/app/storage'
+    env_file:
+      - .env
+    command: /usr/local/bin/supercronic /usr/cron/cron.conf
+    depends_on:
+      - redis
+    networks:
+      - dev-network
+      - database-network
+
+  php:
+    image: repo@image
+    user: 'root'
+    restart: always
+    volumes:
+      #- './conf/php-fpm.conf:/usr/local/etc/php-fpm.conf'
+      - '/etc/passwd:/etc/passwd:ro'
+      - '/etc/group:/etc/group:ro'
+      - './storage:/app/storage'
+      - app-volume:/app/public
+    env_file:
+      - .env
+    command: php-fpm --nodaemonize -d "opcache.enable=1" -d "display_startup_errors=On" -d "display_errors=On" -d "error_reporting=E_ALL" -R
+    depends_on:
+      - redis
+    networks:
+      - dev-network
+      - database-network
+
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dev-network
+
+  web:
+    image: 'artjoker/7.4:nginx'
+    restart: always
+    volumes:
+      - ./storage:/app/storage
+      - app-volume:/app/public:rw
+    depends_on:
+      - php
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.services.project@name.loadbalancer.server.port=80"
+      - "traefik.http.services.project@name.loadbalancer.passHostHeader=true"
+      - "traefik.http.routers.project@name.middlewares=project@name_middlewares@file"
+      - "traefik.http.routers.project@name.rule=Host(`example.com`)"
+      - "traefik.http.routers.project@name.tls.certresolver=lehttp"
+    networks:
+      - dev-network
+      - traefik
