@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Front\LoginRequest;
+use App\Http\Requests\Front\RegisterRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -20,5 +23,37 @@ class AuthController extends Controller
         }
 
         return redirect(route('login'))->withErrors(['msg' => 'Error'])->withInput();
+    }
+
+    public function showRegisterForm()
+    {
+        return view('front.auth.register');
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $user = User::create([
+            'name' => $request->validated()['nickname'],
+            'email' => $request->validated()['email'],
+            'password' => bcrypt($request->validated()['password']),
+        ]);
+
+        if ($user) {
+            // Email confirm
+            event(new Registered($user));
+
+            auth('web')->login($user);
+
+            return redirect(route('verification.notice'));
+        }
+
+        return redirect(route('home'))->with(['success' => 'Registration success']);
+    }
+
+    public function logout()
+    {
+        auth('web')->logout();
+
+        return redirect(route('home'));
     }
 }

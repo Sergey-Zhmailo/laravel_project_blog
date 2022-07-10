@@ -9,7 +9,8 @@
             <div class="row">
                 <div class="col-12" class="d-flex">
                     <div class="card shadow-sm" style="width: 100%; max-width: 300px; margin: auto;">
-                        <form action="{{ route('login_process') }}" method="post" class="needs-validation @if($errors->all()) was-validated @endif"
+                        <form action="{{ route('login_process') }}" method="post" class="needs-validation
+                        @if($errors->all()) was-validated @endif"
                               novalidate>
                             @csrf
                             <div class="card-header text-center"><h3>Login</h3></div>
@@ -37,7 +38,7 @@
                             </div>
                             <div class="card-footer text-center">
                                 <button class="btn btn-primary" type="submit">Login</button>
-                                <a href="#" class="btn btn-secondary">Register</a>
+                                <a href="{{ route('register') }}" class="btn btn-secondary">Register</a>
                             </div>
                         </form>
                     </div>

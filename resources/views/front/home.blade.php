@@ -5,4 +5,7 @@
 @section('content')
     @include('front.elements.header')
     home
+    @if(session('success'))
+        {{ session()->get('success') }}
+    @endif
 @endsection

@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        auth('web')->logout();
+//        auth('web')->logout();
         return view('front.home');
     }
 }
