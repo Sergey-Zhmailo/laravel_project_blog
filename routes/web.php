@@ -15,20 +15,22 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 */
 
 Route::get('/', [\App\Http\Controllers\Front\HomeController::class, 'index'])->name('home');
+Route::resource('posts', \App\Http\Controllers\Front\PostController::class)->names('posts');
+Route::resource('categories', \App\Http\Controllers\Front\PostCategoryController::class)->names('categories');
+Route::resource('tags', \App\Http\Controllers\Front\PostTagController::class)->names('tags');
+
 // Email verification
-Route::get('/email/verify', function () {
-    return view('front.auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify', [\App\Http\Controllers\Front\EmailVerifyController::class, 'index'])
+    ->middleware('auth')
+    ->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect()->route('home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Front\EmailVerifyController::class, 'store'])
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
 
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::post('/email/verification-notification', [\App\Http\Controllers\Front\EmailVerifyController::class, 'resendEmail'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [\App\Http\Controllers\Front\AuthController::class, 'showLoginForm'])->name('login');
@@ -39,5 +41,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('logout', [\App\Http\Controllers\Front\AuthController::class, 'logout'])->name('logout');
-    Route::get('dashboard', [\App\Http\Controllers\Front\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('profile', [\App\Http\Controllers\Front\DashboardController::class, 'index'])->name('profile');
+    Route::post('profile_process', [\App\Http\Controllers\Front\DashboardController::class, 'profile'])->name('profile_process');
 });

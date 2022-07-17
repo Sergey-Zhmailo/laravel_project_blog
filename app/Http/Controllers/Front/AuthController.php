@@ -19,10 +19,10 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         if (auth('web')->attempt($request->validated())) {
-            return redirect('/');
+            return redirect('/')->with(['success' => 'Success! Welcome']);
         }
 
-        return redirect(route('login'))->withErrors(['msg' => 'Error'])->withInput();
+        return redirect(route('login'))->withErrors(['msg' => 'Login error, check login and password'])->withInput();
     }
 
     public function showRegisterForm()
@@ -33,9 +33,9 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $user = User::create([
-            'name' => $request->validated()['nickname'],
-            'email' => $request->validated()['email'],
-            'password' => bcrypt($request->validated()['password']),
+            'name' => $request->validated('nickname'),
+            'email' => $request->validated('email'),
+            'password' => bcrypt($request->validated('password')),
         ]);
 
         if ($user) {
@@ -44,16 +44,17 @@ class AuthController extends Controller
 
             auth('web')->login($user);
 
-            return redirect(route('verification.notice'));
+            return redirect()->route('verification.notice')->with(['success' => 'Success! Please check your mail
+            and confirm verification']);
         }
 
-        return redirect(route('home'))->with(['success' => 'Registration success']);
+        return back()->withErrors(['msg' => 'Rigistration error'])->withInput();
     }
 
     public function logout()
     {
         auth('web')->logout();
 
-        return redirect(route('home'));
+        return redirect(route('home'))->with(['info' => 'Your are logged out!']);
     }
 }

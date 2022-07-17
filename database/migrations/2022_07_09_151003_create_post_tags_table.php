@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('post_tags', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('slug')->unique();
             $table->string('title');
             $table->text('description')->nullable();

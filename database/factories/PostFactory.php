@@ -24,7 +24,6 @@ class PostFactory extends Factory
         return [
             'user_id' => rand(1, 11),
             'category_id' => rand(1, 11),
-            'tag_ids' => rand(1, 11),
             'slug' => Str::slug($title),
             'title' => $title,
             'image' => fake()->imageUrl(640, 520, null, false, true, 'Faker'),

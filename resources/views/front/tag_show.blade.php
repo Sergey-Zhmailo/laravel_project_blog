@@ -1,6 +1,9 @@
+@php
+    /** @var \App\Models\PostCategory $category */
+@endphp
 @extends('app')
 
-@section('title', 'Home')
+@section('title', $tag->title)
 
 @section('content')
     @include('front.elements.header')
@@ -8,20 +11,24 @@
         <div class="container">
             <div class="row">
                 <div class="col-9">
-                    @if($posts)
+                    @if($tag->posts)
                         <section class="posts-wrapper py-4">
                             <div class="container">
                                 <div class="row">
-                                    @foreach($posts as $post)
+                                    <h1>{{ $tag->title }}</h1>
+                                </div>
+                                <div class="row">
+                                    @foreach($tag->posts as $post)
                                         @include('front.elements.post')
                                     @endforeach
                                 </div>
                             </div>
                         </section>
                     @endif
-                    @if($posts->total() > $posts->count())
-                        @include('front.elements.pagination')
-                    @endif
+                    {{--    TODO Как сделать пагинацию???--}}
+                    {{--    @if($posts->total() > $posts->count())--}}
+                    {{--        @include('front.elements.pagination')--}}
+                    {{--    @endif--}}
                 </div>
                 <div class="col-3">
                     <aside class="py-4">

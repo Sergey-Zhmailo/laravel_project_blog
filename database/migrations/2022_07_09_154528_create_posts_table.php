@@ -13,10 +13,9 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedBigInteger('user_id')->unsigned();
             $table->integer('category_id')->unsigned();
-            $table->string('tag_ids')->nullable();
             $table->string('slug')->unique();
             $table->string('title');
             $table->text('image')->nullable();

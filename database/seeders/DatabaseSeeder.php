@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AdminUser;
 use App\Models\Post;
+use App\Models\PostTag;
 use App\Models\User;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,5 +26,6 @@ class DatabaseSeeder extends Seeder
         Post::factory(100)->create();
         AdminUser::factory(1)->create();
 
+        $this->call(PostPostTagsTableSeeder::class);
     }
 }
