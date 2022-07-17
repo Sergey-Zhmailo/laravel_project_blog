@@ -34,6 +34,9 @@
                                 @endif
                             </div>
                             <div class="content">{{ $post->content }}</div>
+                            @if($post->comments)
+                                @include('front.elements.comments')
+                            @endif
                         </div>
                     </div>
                 </div>

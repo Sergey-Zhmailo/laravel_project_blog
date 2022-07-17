@@ -49,7 +49,7 @@ class PostController extends Controller
      */
     public function show($slug)
     {
-        $post = Post::with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug'])
+        $post = Post::with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
             ->where('slug', $slug)
             ->first();
 

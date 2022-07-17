@@ -21,6 +21,7 @@
         <div class="card-body">
             <div class="info-wrapper">
                 <div class="date">Date: {{ $post->published_at }}</div>
+                <div class="date">Comments: {{ count($post->comments) }}</div>
             </div>
             <a href="{{ route('posts.show', $post->slug) }}"><h5 class="card-title">{{ $post->title }}</h5></a>
             <p class="card-text">{{ $post->excerpt }}</p>

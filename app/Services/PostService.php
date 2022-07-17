@@ -20,10 +20,11 @@ class PostService
 
         $posts = Post::query()
             ->select($columns)
-            ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug'])
+            ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
             ->where([
                 ['is_published', '=', 'true'],
-                ['is_hide', '=', 'false']
+                ['is_hide', '=', 'false'],
+
             ])
             ->paginate($perPage);
 

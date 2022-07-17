@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AdminUser;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\User;
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
         User::factory(11)->create();
         Post::factory(100)->create();
         AdminUser::factory(1)->create();
+        Comment::factory(20)->create();
 
         $this->call(PostPostTagsTableSeeder::class);
     }

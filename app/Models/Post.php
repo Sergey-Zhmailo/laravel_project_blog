@@ -40,4 +40,9 @@ class Post extends Model
     {
         return $this->belongsToMany(PostTag::class, 'post_post_tags', 'post_id', 'post_tag_id', 'id', 'id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at');
+    }
 }
