@@ -11,24 +11,24 @@
         <div class="container">
             <div class="row">
                 <div class="col-9">
-                    @if($category->posts)
+
                         <section class="posts-wrapper py-4">
                             <div class="container">
                                 <div class="row">
                                     <h1>{{ $category->title }}</h1>
                                 </div>
                                 <div class="row">
-                                    @foreach($category->posts as $post)
+                                    @forelse ($posts as $post)
                                         @include('front.elements.post')
-                                    @endforeach
+                                    @empty
+                                        <p>No posts</p>
+                                    @endforelse
                                 </div>
                             </div>
                         </section>
-                    @endif
-                    {{--    TODO Как сделать пагинацию???--}}
-                    {{--    @if($posts->total() > $posts->count())--}}
-                    {{--        @include('front.elements.pagination')--}}
-                    {{--    @endif--}}
+                        @if($posts->total() > $posts->count())
+                            @include('front.elements.pagination')
+                        @endif
                 </div>
                 <div class="col-3">
                     <aside class="py-4">

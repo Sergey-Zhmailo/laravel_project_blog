@@ -19,7 +19,6 @@ class DashboardController extends Controller
     {
         $result = null;
         $user = auth('web')->user();
-        dd($user->image);
         $data = $profileRequest->all();
 
         if (!$data['password'] && !$data['avatar-image']) {
@@ -27,11 +26,13 @@ class DashboardController extends Controller
         }
 
         if ($profileRequest->file('avatar-image')) {
-            $path = $profileRequest->file('avatar-image')->store('avatars');
+            $path = $profileRequest->file('avatar-image')
+                ->store('avatars', ['disk' => 'public']);
 
             if ($path) {
-                $result = $user->update(['image' => 'asd']);
-                dd($user->image);
+                Storage::delete($user->image);
+                $result = $user->update(['image' => $path]);
+
             }
 
             if (!$result) {

@@ -6,7 +6,7 @@ use App\Models\Post;
 
 class PostService
 {
-    public function getAllWithPaginate($perPage = null)
+    public function getAllPublicWithPaginate($perPage = null)
     {
         $columns = [
             'id',
@@ -17,15 +17,12 @@ class PostService
             'excerpt',
             'published_at'
         ];
-
+        // TODO ->when()
         $posts = Post::query()
             ->select($columns)
             ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
-            ->where([
-                ['is_published', '=', 'true'],
-                ['is_hide', '=', 'false'],
-
-            ])
+            ->where('is_published', '=', true)
+            ->where('is_hide', '=', false)
             ->paginate($perPage);
 
         return $posts;

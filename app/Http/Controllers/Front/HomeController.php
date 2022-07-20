@@ -20,12 +20,34 @@ class HomeController extends Controller
 
     public function index()
     {
-        $posts = $this->postService->getAllWithPaginate(12);
+        $posts = $this->postService->getAllPublicWithPaginate(6);
         $tags = PostTag::all('id', 'title', 'slug');
         $categories = PostCategory::all('id', 'title', 'slug');
 
         return view('front.home', [
             'posts' => $posts,
+            'tags' => $tags,
+            'categories' => $categories
+        ]);
+    }
+
+    public function show($slug)
+    {
+        $post = Post::with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->where('is_hide', false)
+            ->first();
+
+        if (!$post) {
+            abort(404);
+        }
+
+        $tags = PostTag::all('id', 'title', 'slug');
+        $categories = PostCategory::all('id', 'title', 'slug');
+
+        return view('front.post_show', [
+            'post' => $post,
             'tags' => $tags,
             'categories' => $categories
         ]);

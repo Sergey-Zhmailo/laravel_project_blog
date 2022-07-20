@@ -21,7 +21,7 @@
                             <h1>{{ $post->title }}</h1>
                             <div class="post-info">
                                 @if($post->post_category)
-                                    <h6>Category: <a href="{{ route('categories.show', $post->post_category->slug) }}">{{
+                                    <h6>Category: <a href="{{ route('categories', $post->post_category->slug) }}">{{
                         $post->post_category->title
                         }}</a></h6>
                                 @endif
@@ -36,6 +36,9 @@
                             <div class="content">{{ $post->content }}</div>
                             @if($post->comments)
                                 @include('front.elements.comments')
+                            @endif
+                            @if(auth('web')->check() && auth('web')->user()->email_verified_at)
+                                @include('front.elements.comments_form')
                             @endif
                         </div>
                     </div>

@@ -48,7 +48,11 @@ class PostTagController extends Controller
      */
     public function show($slug)
     {
-        $tag = PostTag::with('posts:id,id,title,slug,image,published_at')
+//        $tag = PostTag::with('posts:id,id,title,slug,image,published_at')
+//            ->where('slug', $slug)
+//            ->first();
+
+        $tag = PostTag::with('posts')
             ->where('slug', $slug)
             ->first();
 
@@ -56,13 +60,19 @@ class PostTagController extends Controller
             return redirect('404');
         }
 
-        $tags = PostTag::all('id', 'title', 'slug');
-        $categories = PostCategory::all('id', 'title', 'slug');
+        $posts = $tag->posts()
+            ->where('is_published', true)
+            ->where('is_hide', false)
+            ->paginate(6);
+
+        $tags = PostTag::with('posts')->get(['id', 'title', 'slug']);
+        $categories = PostCategory::with('posts')->get(['id', 'title', 'slug']);
 
         return view('front.tag_show', [
             'tag' => $tag,
             'tags' => $tags,
-            'categories' => $categories
+            'categories' => $categories,
+            'posts' => $posts
         ]);
     }
 

@@ -8,17 +8,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-9">
-                    @if($posts)
-                        <section class="posts-wrapper py-4">
-                            <div class="container">
-                                <div class="row">
-                                    @foreach($posts as $post)
-                                        @include('front.elements.post')
-                                    @endforeach
-                                </div>
+                    <section class="posts-wrapper py-4">
+                        <div class="container">
+                            <div class="row">
+                                @forelse ($posts as $post)
+                                    @include('front.elements.post')
+                                @empty
+                                    <p>No posts</p>
+                                @endforelse
                             </div>
-                        </section>
-                    @endif
+                        </div>
+                    </section>
                     @if($posts->total() > $posts->count())
                         @include('front.elements.pagination')
                     @endif

@@ -43,26 +43,32 @@ class PostCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $slug
      * @return \Illuminate\Http\Response
      */
     public function show($slug)
     {
-        $category = PostCategory::with('posts:category_id,id,title,slug,image,published_at')
+        $category = PostCategory::with('posts')
             ->where('slug', $slug)
             ->first();
 
         if (!$category) {
             return redirect('404');
         }
-
-        $tags = PostTag::all('id', 'title', 'slug');
-        $categories = PostCategory::all('id', 'title', 'slug');
+        $posts = $category->posts()
+            ->where('is_published', true)
+            ->where('is_hide', false)
+            ->paginate(6);
+        $tags = PostTag::with('posts')->get(['id', 'title', 'slug']);
+//        $tags_posts = $tags;
+//        dd($tags_posts);
+        $categories = PostCategory::with('posts')->get(['id', 'title', 'slug']);
 
         return view('front.category_show', [
             'category' => $category,
             'tags' => $tags,
-            'categories' => $categories
+            'categories' => $categories,
+            'posts' => $posts
         ]);
     }
 
