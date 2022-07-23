@@ -38,4 +38,8 @@
     top: 20px;
     right: 20px;
     line-height: 1;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 5px;
 }

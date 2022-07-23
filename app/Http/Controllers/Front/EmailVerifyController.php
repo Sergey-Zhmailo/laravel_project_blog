@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class EmailVerifyController extends Controller
 {
+    /**
+     * Display ferify email page
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function index()
     {
         return view('front.auth.verify-email');

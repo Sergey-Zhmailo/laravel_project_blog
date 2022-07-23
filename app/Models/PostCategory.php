@@ -18,7 +18,12 @@ class PostCategory extends Model
         'description'
     ];
 
-    public function posts() {
+    /**
+     * Posts relation
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function posts()
+    {
         return $this->hasMany(Post::class, 'category_id', 'id');
     }
 }

@@ -10,7 +10,10 @@
                     @endif
                 </h3>
             </div>
-            <div class="col-8 text-end">
+            <div class="col-4">
+                @include('front.elements.search')
+            </div>
+            <div class="col-4 text-end">
                 @auth('web')
                     <div class="btn-group">
                         <a href="{{ route('profile') }}" type="button" class="btn btn-outline-primary d-flex align-items-center">

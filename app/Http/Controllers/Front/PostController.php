@@ -3,13 +3,26 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Front\PostCreateRequest;
+use App\Http\Requests\Front\PostUpdateRequest;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\PostTag;
+use App\Models\User;
+use App\Services\PostService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
+    private PostService $postService;
+
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +30,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        dd(__METHOD__);
+        $posts = $this->postService->getAllUserWithPaginate(6);
+
+        return view('front.auth.user_posts', [
+            'posts' => $posts
+        ]);
     }
 
     /**
@@ -27,34 +44,108 @@ class PostController extends Controller
      */
     public function create()
     {
-        dd(__METHOD__);
+        $post = new Post();
+
+        $post_tags = [];
+
+        $categories = PostCategory::query()
+            ->select('id', 'title')
+            ->toBase()
+            ->get();
+
+        $tags = PostTag::query()
+            ->get();
+
+        return view('front.auth.post_edit', [
+            'post' => $post,
+            'categories' => $categories,
+            'tags' => $tags,
+            'post_tags' => $post_tags
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostCreateRequest $postCreateRequest)
     {
-        dd(__METHOD__);
+        $data['title'] = $postCreateRequest->get('title');
+        $data['category_id'] = $postCreateRequest->get('category_id');
+        $data['slug'] = $postCreateRequest->get('slug');
+        $data['excerpt'] = $postCreateRequest->get('excerpt');
+        $data['content'] = $postCreateRequest->get('content');
+        $data['is_published'] = boolval($postCreateRequest->get('is_published'));
+        $data['is_hide'] = boolval($postCreateRequest->get('is_hide'));
+        $data['published_at'] = $postCreateRequest->get('published_at');
+
+        $post = (new Post())->create($data);
+
+        //Tags
+        $tags = $postCreateRequest->get('tag_ids');
+        $add_post_tag = true;
+        $clear_post_tags = DB::table('post_post_tags')
+            ->where('post_id', '=', $post->id)
+            ->delete();
+
+        if (is_array($tags) && count($tags) > 0) {
+            foreach ($tags as $tag) {
+                $add_post_tag = DB::table('post_post_tags')
+                    ->insert([
+                        'post_id' => $post->id,
+                        'post_tag_id' => $tag
+                    ]);
+            }
+        }
+        if (!$add_post_tag) {
+            return back()
+                ->withErrors(['msg' => 'Update tags error'])
+                ->withInput();
+        }
+
+        // Image
+        if ($postCreateRequest->file('image')) {
+            $path = $postCreateRequest->file('image')
+                ->store('posts/' . $post->id, ['disk' => 'public']);
+
+            if ($path) {
+                if ($post->image) {
+                    Storage::delete($post->image);
+                }
+                $add_image = $post->update(['image' => $path]);
+            }
+
+            if (!$add_image) {
+                return back()->withErrors(['msg' => 'Update image error']);
+            }
+        }
+
+        if ($post) {
+            return redirect()->route('posts.edit', $post->id)
+                ->with(['success' => 'Save success']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Save Error'])
+                ->withInput();
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $slug
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show(string $slug)
     {
-        $post = Post::with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
+        $post = Post::with(['post_category', 'post_tags', 'comments'])
             ->where('slug', $slug)
             ->first();
 
         if (!$post) {
-            return redirect('404');
+            abort(404);
         }
 
         $tags = PostTag::all('id', 'title', 'slug');
@@ -70,34 +161,137 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        dd(__METHOD__);
+        $post = Post::with('post_tags')->where('user_id', '=', auth('web')->id())->find($id);
+
+        $post_tags = $post->post_tags->map(function ($post_tag) {
+            return $post_tag->id;
+        });
+
+        $post_tags = $post_tags->toArray();
+
+        $categories = PostCategory::query()
+            ->select('id', 'title')
+            ->toBase()
+            ->get();
+
+        $tags = PostTag::query()
+            ->get();
+
+        if (empty($post)) {
+            abort(404);
+        }
+
+        return view('front.auth.post_edit', [
+            'post' => $post,
+            'categories' => $categories,
+            'tags' => $tags,
+            'post_tags' => $post_tags
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostUpdateRequest $postUpdateRequest, int $id)
     {
-        dd(__METHOD__);
+        $post = Post::find($id);
+
+        if ($post->user_id !== auth('web')->id()) {
+            abort(404);
+        }
+
+        $data['title'] = $postUpdateRequest->get('title');
+        $data['category_id'] = $postUpdateRequest->get('category_id');
+        $data['slug'] = $postUpdateRequest->get('slug');
+        $data['excerpt'] = $postUpdateRequest->get('excerpt');
+        $data['content'] = $postUpdateRequest->get('content');
+        $data['is_published'] = boolval($postUpdateRequest->get('is_published'));
+        $data['is_hide'] = boolval($postUpdateRequest->get('is_hide'));
+        $data['published_at'] = $postUpdateRequest->get('published_at');
+
+        //Tags
+        $tags = $postUpdateRequest->get('tag_ids');
+        $add_post_tag = true;
+        $clear_post_tags = DB::table('post_post_tags')
+            ->where('post_id', '=', $post->id)
+            ->delete();
+
+        if (is_array($tags) && count($tags) > 0) {
+            foreach ($tags as $tag) {
+                $add_post_tag = DB::table('post_post_tags')
+                    ->insert([
+                        'post_id' => $post->id,
+                        'post_tag_id' => $tag
+                    ]);
+            }
+        }
+        if (!$add_post_tag) {
+            return back()
+                ->withErrors(['msg' => 'Update tags error'])
+                ->withInput();
+        }
+
+        // Image
+        if ($postUpdateRequest->file('image')) {
+            $path = $postUpdateRequest->file('image')
+                ->store('posts/' . $post->id, ['disk' => 'public']);
+
+            if ($path) {
+                if ($post->image) {
+                    Storage::delete($post->image);
+                }
+                $add_image = $post->update(['image' => $path]);
+            }
+
+            if (!$add_image) {
+                return back()->withErrors(['msg' => 'Update emage error']);
+            }
+        }
+
+        $result = $post->update($data);
+
+        if ($result) {
+            return redirect()
+                ->route('posts.edit', $post->id)
+                ->with(['success' => 'Update success']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Update error'])
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
-        dd(__METHOD__);
+        $post = Post::findOrFail($id);
+
+        if ($post->image) {
+            Storage::delete($post->image);
+        }
+
+        $result = Post::destroy($id);
+
+        if ($result) {
+            return back()
+                ->with(['success' => 'Delete success']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Delete error']);
+        }
     }
 }

@@ -26,7 +26,8 @@
                                     @enderror
                                 </div>
                                 <div class="input-group has-validation">
-                                    <span class="input-group-text" id="password-label" style="width: 100px;">Password</span>
+                                    <span class="input-group-text" id="password-label"
+                                          style="width: 100px;">Password</span>
                                     <input type="password" name="password" class="form-control" id="login-password"
                                            aria-describedby="password-label" required>
                                     @error('password')

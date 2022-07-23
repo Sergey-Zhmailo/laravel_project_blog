@@ -18,7 +18,12 @@ class PostTag extends Model
         'description'
     ];
 
-    public function posts() {
+    /**
+     * Posts relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function posts()
+    {
         {
             return $this->belongsToMany(Post::class, 'post_post_tags', 'post_tag_id', 'post_id', 'id', 'id');
         }

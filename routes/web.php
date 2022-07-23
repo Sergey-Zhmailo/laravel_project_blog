@@ -24,9 +24,10 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('post/{slug}', [HomeController::class, 'show'])->name('post');
-Route::resource('posts', PostController::class)->names('posts');
 Route::get('categories/{slug}', [PostCategoryController::class, 'show'])->name('categories');
 Route::get('tags/{slug}', [PostTagController::class, 'show'])->name('tags');
+Route::get('search', [HomeController::class, 'search'])->name('search');
+Route::post('search', [HomeController::class, 'search_process'])->name('search_process');
 
 // Email verification
 Route::group([
@@ -57,6 +58,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('profile', [DashboardController::class, 'index'])->name('profile');
+    Route::get('user_posts', [PostController::class, 'index'])->name('user_posts');
+    Route::resource('posts', PostController::class)->names('posts');
     Route::post('profile_process', [DashboardController::class, 'profile'])->name('profile_process');
     Route::post('comment_process', [CommentController::class, 'comment_process'])->name('comment_process');
 });

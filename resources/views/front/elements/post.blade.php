@@ -3,11 +3,9 @@
 @endphp
 <div class="col-lg-4 col-md-6 col p-2">
     <div class="card post-item">
-{{--        @if(Route::currentRouteName() == 'home')--}}
         <a href="{{ route('categories', $post->post_category->slug) }}"><span class="badge bg-white text-black
         category-badge">{{
         $post->post_category->title }}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M194.74 96l54.63 54.63c6 6 14.14 9.37 22.63 9.37h192c8.84 0 16 7.16 16 16v224c0 8.84-7.16 16-16 16H48c-8.84 0-16-7.16-16-16V112c0-8.84 7.16-16 16-16h146.74M48 64C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48z"/></svg></span></a>
-{{--        @endif--}}
         <div class="tags-wrapper">
             @if($post->post_tags())
                 @foreach($post->post_tags as $tag)
@@ -17,12 +15,19 @@
                 @endforeach
             @endif
         </div>
-        <a href="{{ route('post', $post->slug) }}"><img src="{{ $post->image }}" class="card-img-top" alt="{{
-        $post->title }}"></a>
+        <a href="{{ route('post', $post->slug) }}">
+            @if($post->image)
+                <img class="card-img-top rounded d-block lh-1 mw-100" src="{{ asset('storage/' . $post->image) }}"
+                     alt="{{ $post->title }}">
+            @else
+                <img class="card-img-top rounded d-block lh-1 mw-100" src="{{ asset('storage/no_image.png') }}"
+                     alt="{{ $post->title }}">
+            @endif
+        </a>
         <div class="card-body">
             <div class="info-wrapper">
                 <div class="date">Date: {{ $post->published_at }}</div>
-                <div class="date">Comments: {{ count($post->comments) }}</div>
+                <div class="date">Comments: {{ $post->comments_count }}</div>
             </div>
             <a href="{{ route('post', $post->slug) }}"><h5 class="card-title">{{ $post->title }}</h5></a>
             <p class="card-text">{{ $post->excerpt }}</p>

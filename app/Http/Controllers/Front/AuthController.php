@@ -11,11 +11,20 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    /**
+     * Display login page
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function showLoginForm()
     {
         return view('front.auth.login');
     }
 
+    /**
+     * Login process
+     * @param LoginRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function login(LoginRequest $request)
     {
         if (auth('web')->attempt($request->validated())) {
@@ -25,6 +34,10 @@ class AuthController extends Controller
         return redirect(route('login'))->withErrors(['msg' => 'Login error, check login and password'])->withInput();
     }
 
+    /**
+     * Display register page
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function showRegisterForm()
     {
         return view('front.auth.register');
@@ -51,6 +64,10 @@ class AuthController extends Controller
         return back()->withErrors(['msg' => 'Rigistration error'])->withInput();
     }
 
+    /**
+     * Logout process
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function logout()
     {
         auth('web')->logout();

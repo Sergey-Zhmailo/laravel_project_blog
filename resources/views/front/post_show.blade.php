@@ -13,7 +13,13 @@
                 <div class="col-9">
                     <div class="row">
                         <div class="col-12">
-                            <img src="{{ $post->image }}" alt="{{ $post->title }}">
+                            @if($post->image)
+                                <img class="rounded d-block lh-1 mw-100" src="{{ asset('storage/' .
+                                $post->image) }}" alt="{{ $post->title }}">
+                            @else
+                                <img class="rounded d-block lh-1 mw-100" src="{{ asset('storage/no_image.png')
+                                }}" alt="{{ $post->title }}">
+                            @endif
                         </div>
                     </div>
                     <div class="row">

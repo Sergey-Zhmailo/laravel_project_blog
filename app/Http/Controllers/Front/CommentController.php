@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    /**
+     * Comment process
+     * @param CommentRequest $commentRequest
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function comment_process(CommentRequest $commentRequest)
     {
         $post = Post::query()->findOrFail($commentRequest->input('post_id'));
@@ -16,9 +21,13 @@ class CommentController extends Controller
         $res = $post->comments()->create($commentRequest->input());
 
         if ($res) {
-            return redirect()->route('post', $post->slug)->with(['success' => 'Success! Your comment was published']);
+            return redirect()
+                ->route('post', $post->slug)
+                ->with(['success' => 'Success! Your comment was published']);
         } else {
-            return redirect()->route('post', $post->slug)->withErrors(['msg' => 'Error']);
+            return redirect()
+                ->route('post', $post->slug)
+                ->withErrors(['msg' => 'Error']);
         }
     }
 }
