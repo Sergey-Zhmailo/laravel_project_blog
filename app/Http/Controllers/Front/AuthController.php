@@ -72,6 +72,6 @@ class AuthController extends Controller
     {
         auth('web')->logout();
 
-        return redirect(route('home'))->with(['info' => 'Your are logged out!']);
+        return redirect()->route('home')->with(['info' => 'Your are logged out!']);
     }
 }

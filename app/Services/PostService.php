@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Post;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostService
 {
@@ -63,5 +65,55 @@ class PostService
             ->paginate($perPage);
 
         return $posts;
+    }
+
+    /**
+     * Save post tags while
+     * @param array $tags
+     * @param $post
+     * @return bool
+     */
+    public function savePostTags(array $tags, $post)
+    {
+        $add_post_tag = true;
+        $clear_post_tags = DB::table('post_post_tags')
+            ->where('post_id', '=', $post->id)
+            ->delete();
+
+        if (is_array($tags) && count($tags) > 0) {
+            foreach ($tags as $tag) {
+                $add_post_tag = DB::table('post_post_tags')
+                    ->insert([
+                        'post_id' => $post->id,
+                        'post_tag_id' => $tag
+                    ]);
+            }
+        }
+
+        return $add_post_tag;
+    }
+
+    /**
+     * Save post image
+     * @param $file
+     * @param $post
+     * @return bool|\Illuminate\Http\RedirectResponse
+     */
+    public function savePostImage($file, $post)
+    {
+        $path = $file->store('posts/' . $post->id, ['disk' => 'public']);
+
+        if ($path) {
+            if ($post->image) {
+                Storage::delete($post->image);
+            }
+            $add_image = $post->update(['image' => $path]);
+        }
+
+        if (!$add_image) {
+            return back()->withErrors(['msg' => 'Update image error']);
+        }
+
+        return true;
     }
 }

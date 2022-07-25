@@ -84,21 +84,8 @@ class PostController extends Controller
         $post = (new Post())->create($data);
 
         //Tags
-        $tags = $postCreateRequest->get('tag_ids');
-        $add_post_tag = true;
-        $clear_post_tags = DB::table('post_post_tags')
-            ->where('post_id', '=', $post->id)
-            ->delete();
+        $add_post_tag = $this->postService->savePostTags($postCreateRequest->get('tag_ids'), $post);
 
-        if (is_array($tags) && count($tags) > 0) {
-            foreach ($tags as $tag) {
-                $add_post_tag = DB::table('post_post_tags')
-                    ->insert([
-                        'post_id' => $post->id,
-                        'post_tag_id' => $tag
-                    ]);
-            }
-        }
         if (!$add_post_tag) {
             return back()
                 ->withErrors(['msg' => 'Update tags error'])
@@ -107,19 +94,7 @@ class PostController extends Controller
 
         // Image
         if ($postCreateRequest->file('image')) {
-            $path = $postCreateRequest->file('image')
-                ->store('posts/' . $post->id, ['disk' => 'public']);
-
-            if ($path) {
-                if ($post->image) {
-                    Storage::delete($post->image);
-                }
-                $add_image = $post->update(['image' => $path]);
-            }
-
-            if (!$add_image) {
-                return back()->withErrors(['msg' => 'Update image error']);
-            }
+            $image = $this->postService->savePostImage($postCreateRequest->file('image'), $post);
         }
 
         if ($post) {
@@ -219,21 +194,8 @@ class PostController extends Controller
         $data['published_at'] = $postUpdateRequest->get('published_at');
 
         //Tags
-        $tags = $postUpdateRequest->get('tag_ids');
-        $add_post_tag = true;
-        $clear_post_tags = DB::table('post_post_tags')
-            ->where('post_id', '=', $post->id)
-            ->delete();
+        $add_post_tag = $this->postService->savePostTags($postUpdateRequest->get('tag_ids'), $post);
 
-        if (is_array($tags) && count($tags) > 0) {
-            foreach ($tags as $tag) {
-                $add_post_tag = DB::table('post_post_tags')
-                    ->insert([
-                        'post_id' => $post->id,
-                        'post_tag_id' => $tag
-                    ]);
-            }
-        }
         if (!$add_post_tag) {
             return back()
                 ->withErrors(['msg' => 'Update tags error'])
@@ -242,19 +204,7 @@ class PostController extends Controller
 
         // Image
         if ($postUpdateRequest->file('image')) {
-            $path = $postUpdateRequest->file('image')
-                ->store('posts/' . $post->id, ['disk' => 'public']);
-
-            if ($path) {
-                if ($post->image) {
-                    Storage::delete($post->image);
-                }
-                $add_image = $post->update(['image' => $path]);
-            }
-
-            if (!$add_image) {
-                return back()->withErrors(['msg' => 'Update emage error']);
-            }
+            $image = $this->postService->savePostImage($postUpdateRequest->file('image'), $post);
         }
 
         $result = $post->update($data);
