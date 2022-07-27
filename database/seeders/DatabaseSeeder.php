@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PostTagsTableSeeder::class);
 
         User::factory(11)->create();
-        Post::factory(100)->create();
-        AdminUser::factory(1)->create();
+        $this->call(PostsTableSeeder::class);
+//        Post::factory(100)->create();
         Comment::factory(20)->create();
 
         $this->call(PostPostTagsTableSeeder::class);
