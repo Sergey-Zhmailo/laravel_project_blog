@@ -82,8 +82,11 @@
                                                    id="avatar-image-disabled"
                                                    aria-describedby="avatar-image-disabled-label"
                                                    disabled
-                                                   @if(auth('web')->user()->image)
-                                                       value="{{ auth('web')->user()->image }}"
+{{--                                                   @if(auth('web')->user()->image)--}}
+{{--                                                       value="{{ auth('web')->user()->image }}"--}}
+{{--                                                   @else--}}
+                                                   @if(auth('web')->user()->getFirstMedia('avatars'))
+                                                       value="{{ auth('web')->user()->getFirstMediaUrl('avatars') }}"
                                                    @else
                                                        value="No image"
                                                 @endif
@@ -99,8 +102,11 @@
                                             @enderror
                                         </div>
                                         <div class="avatar-wrapper p-4">
-                                            @if(auth('web')->user()->image)
-                                                <img src="{{ asset('storage/' . auth('web')->user()->image) }}"
+{{--                                            @if(auth('web')->user()->image)--}}
+                                            @if(auth('web')->user()->getFirstMedia('avatars'))
+{{--                                                <img src="{{ asset('storage/' . auth('web')->user()->image) }}"--}}
+{{--                                                     class="rounded float-start" alt="...">--}}
+                                                <img src="{{ auth('web')->user()->getFirstMedia('avatars')->getUrl('thumb') }}"
                                                      class="rounded float-start" alt="...">
                                             @else
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
