@@ -6,3 +6,28 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+$fz:80px;
+%tpl_test {
+    color: #0a53be;
+}
+@mixin fontm($f) {
+    font-size: $f;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    //&:hover {
+    //
+    //}
+    //.block & {
+    //    font-size: $fz;
+    //}
+}
+
+//p {
+//    @extend %tpl_test;
+//    @extend .block;
+//    @include fontm('100px')
+//}
+

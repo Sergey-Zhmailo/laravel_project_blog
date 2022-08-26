@@ -231,7 +231,8 @@
                                                     class="form-control"
                                                     type="file"
                                                     id="post-image"
-                                                    name="image"
+                                                    name="image[]"
+                                                    multiple
                                                 >
                                                 @error('image')
                                                 <div class="invalid-feedback">
@@ -240,9 +241,11 @@
                                                 @enderror
                                             </div>
                                             <div class="image-wrapper py-4">
-                                                @if($post->image)
-                                                    <img src="{{ asset('storage/' . $post->image) }}"
-                                                         class="rounded d-block lh-1 mw-100" alt="..."
+                                                @if($post->getFirstMedia('posts'))
+                                                    <img
+                                                        src="{{ $post->getFirstMediaUrl('posts') }}"
+                                                        class="rounded d-block lh-1 mw-100"
+                                                        alt="..."
                                                     >
                                                 @else
                                                     No image

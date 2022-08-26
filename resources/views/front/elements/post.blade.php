@@ -16,8 +16,9 @@
             @endif
         </div>
         <a href="{{ route('post', $post->slug) }}">
-            @if($post->image)
-                <img class="card-img-top rounded d-block lh-1 mw-100" src="{{ asset('storage/' . $post->image) }}"
+            @if($post->getFirstMedia('posts'))
+                <img class="card-img-top rounded d-block lh-1 mw-100"
+                     src="{{ $post->getFirstMedia('posts')->getUrl('post_thumb') }}"
                      alt="{{ $post->title }}">
             @else
                 <img class="card-img-top rounded d-block lh-1 mw-100" src="{{ asset('storage/no_image.png') }}"

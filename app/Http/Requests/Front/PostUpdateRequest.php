@@ -48,7 +48,7 @@ class PostUpdateRequest extends FormRequest
                 'integer',
                 'exists:post_tags,id'
             ],
-            'image' => [
+            'image.*' => [
                 'mimes:jpeg,bmp,png',
                 'max:5000'
             ]

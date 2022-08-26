@@ -103,6 +103,7 @@
                                         </div>
                                         <div class="avatar-wrapper p-4">
 {{--                                            @if(auth('web')->user()->image)--}}
+
                                             @if(auth('web')->user()->getFirstMedia('avatars'))
 {{--                                                <img src="{{ asset('storage/' . auth('web')->user()->image) }}"--}}
 {{--                                                     class="rounded float-start" alt="...">--}}

@@ -94,7 +94,8 @@ class PostController extends Controller
 
         // Image
         if ($postCreateRequest->file('image')) {
-            $image = $this->postService->savePostImage($postCreateRequest->file('image'), $post);
+//            $image = $this->postService->savePostImage($postCreateRequest->file('image'), $post);
+            $image = $post->addMedia($postCreateRequest->file('image'))->toMediaCollection('posts');
         }
 
         if ($post) {
@@ -204,7 +205,19 @@ class PostController extends Controller
 
         // Image
         if ($postUpdateRequest->file('image')) {
-            $image = $this->postService->savePostImage($postUpdateRequest->file('image'), $post);
+//            $image = $this->postService->savePostImage($postUpdateRequest->file('image'), $post);
+//            $fileAdders = $listing->addMultipleMediaFromRequest(['photo'])
+//                ->each(function ($fileAdder) {
+//                    $fileAdder->toMediaCollection('photos');
+//                });
+//            dd($postUpdateRequest->file('image'));
+            $fileAdders = $post
+                ->addMultipleMediaFromRequest(['image'])
+                ->each(function ($fileAdder) {
+                    $fileAdder->toMediaCollection('posts');
+                });
+//            dd($fileAdders);
+//            $image = $post->addMedia($postUpdateRequest->file('image'))->toMediaCollection('posts');
         }
 
         $result = $post->update($data);

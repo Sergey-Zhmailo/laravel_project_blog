@@ -13,9 +13,29 @@
                 <div class="col-9">
                     <div class="row">
                         <div class="col-12">
-                            @if($post->image)
-                                <img class="rounded d-block lh-1 mw-100" src="{{ asset('storage/' .
-                                $post->image) }}" alt="{{ $post->title }}">
+                            @if($post->getFirstMedia('posts'))
+                                @if(count($post->getMedia('posts')) > 1)
+                                    <div class="swiper post-slider">
+                                        <div class="swiper-wrapper">
+                                            @foreach($post->getMedia('posts') as $slide)
+                                                <div class="swiper-slide">
+                                                    <img src="{{ $slide->getUrl
+                                ('post_preview') }}" alt="">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @else
+                                    <img
+                                        class="rounded d-block lh-1 mw-100"
+                                        src="{{  $post->getFirstMedia('posts')->getUrl
+                                ('post_preview') }}"
+                                        alt="{{ $post->title }}"
+                                    >
+                                @endif
+{{--                                <img class="rounded d-block lh-1 mw-100" src="{{ asset('storage/' .--}}
+{{--                                $post->image) }}" alt="{{ $post->title }}">--}}
+
                             @else
                                 <img class="rounded d-block lh-1 mw-100" src="{{ asset('storage/no_image.png')
                                 }}" alt="{{ $post->title }}">
