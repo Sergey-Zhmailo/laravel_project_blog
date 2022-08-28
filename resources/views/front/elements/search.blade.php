@@ -1,3 +1,4 @@
+@if(!in_array(Route::currentRouteName(), ['profile', 'user_posts', 'posts.edit', 'posts.create', 'user_posts_trash']))
 <div class="search-header-wrapper">
     <form action="{{ route('search_process') }}" method="post">
         @csrf
@@ -13,3 +14,4 @@
         </div>
     </form>
 </div>
+@endif

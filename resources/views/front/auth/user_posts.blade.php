@@ -41,15 +41,26 @@
                                         }}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                <a href="{{ route('post', $post->slug) }}" type="button" class="btn
+                                                @if(Route::currentRouteName() == 'user_posts')
+                                                    <a href="{{ route('post', $post->slug) }}" type="button" class="btn
                                                 btn-outline-primary">Preview</a>
-                                                <a href="{{ route('posts.edit', $post->id) }}" type="button" class="btn
+                                                    <a href="{{ route('posts.edit', $post->id) }}" type="button" class="btn
                                                 btn-outline-warning">Edit</a>
-                                                <form method="post" action="{{ route('posts.destroy', $post->id) }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="submit" value="Delete" class="btn btn-outline-danger">
-                                                </form>
+                                                    <form method="post" action="{{ route('posts.destroy', $post->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="submit" value="Delete" class="btn btn-outline-danger">
+                                                    </form>
+                                                @endif
+                                                @if(Route::currentRouteName() == 'user_posts_trash')
+                                                        <a href="{{ route('posts.restore',
+                                                    $post->id) }}" type="button" class="btn
+                                                btn-outline-primary">Restore</a>
+                                                        <a href="{{ route('posts.force_delete',
+                                                    $post->id) }}" type="button" class="btn
+                                                btn-outline-danger">Delete from trash</a>
+                                                @endif
+
                                             </div>
                                         </td>
                                     </tr>

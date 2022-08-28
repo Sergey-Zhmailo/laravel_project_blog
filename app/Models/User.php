@@ -63,4 +63,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
             ->height(232)
             ->sharpen(10);
     }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('avatars')
+            ->singleFile();
+    }
 }

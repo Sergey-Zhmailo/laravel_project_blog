@@ -18,8 +18,8 @@
                     <div class="btn-group">
                         <a href="{{ route('profile') }}" type="button" class="btn btn-outline-primary d-flex align-items-center">
                             <span class="avatar-image-wrapper">
-                                @if(auth('web')->user()->image)
-                                    <img src="{{ asset('storage/' . auth('web')->user()->image) }}"
+                                @if(auth('web')->user()->getFirstMedia('avatars'))
+                                    <img src="{{ auth('web')->user()->getFirstMedia('avatars')->getUrl('thumb') }}"
                                          class="" alt="user avatar">
                                 @else
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="#e9ecef" d="M248

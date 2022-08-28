@@ -10,9 +10,11 @@ use App\Models\PostCategory;
 use App\Models\PostTag;
 use App\Models\User;
 use App\Services\PostService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Integer;
 
 class PostController extends Controller
 {
@@ -206,18 +208,13 @@ class PostController extends Controller
         // Image
         if ($postUpdateRequest->file('image')) {
 //            $image = $this->postService->savePostImage($postUpdateRequest->file('image'), $post);
-//            $fileAdders = $listing->addMultipleMediaFromRequest(['photo'])
-//                ->each(function ($fileAdder) {
-//                    $fileAdder->toMediaCollection('photos');
-//                });
-//            dd($postUpdateRequest->file('image'));
-            $fileAdders = $post
-                ->addMultipleMediaFromRequest(['image'])
-                ->each(function ($fileAdder) {
-                    $fileAdder->toMediaCollection('posts');
-                });
-//            dd($fileAdders);
-//            $image = $post->addMedia($postUpdateRequest->file('image'))->toMediaCollection('posts');
+            $fileAdders = $this->postService->savePostImageToLibrary('image', $post);
+
+            if (!$fileAdders) {
+                return back()
+                    ->withErrors(['msg' => 'Update image error'])
+                    ->withInput();
+            }
         }
 
         $result = $post->update($data);
@@ -243,11 +240,12 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ($post->image) {
-            Storage::delete($post->image);
-        }
+//        if ($post->image) {
+//            Storage::delete($post->image);
+//        }
 
-        $result = Post::destroy($id);
+//        $result = Post::destroy($id);
+        $result = $post->delete($id);
 
         if ($result) {
             return back()
@@ -255,6 +253,65 @@ class PostController extends Controller
         } else {
             return back()
                 ->withErrors(['msg' => 'Delete error']);
+        }
+    }
+
+    /**
+     * List of Deleted posts
+     * @return void
+     */
+    public function trash()
+    {
+        $posts = $this->postService->getAllUserDeletedWithPaginate(6);
+
+        return view('front.auth.user_posts', [
+            'posts' => $posts
+        ]);
+
+    }
+
+    /**
+     * Final delete post
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function force_delete(int $id)
+    {
+        $post = Post::withTrashed()->findOrFail($id);
+
+        $mediaItems = $post->getMedia('posts');
+        if (count($mediaItems) > 0) {
+            $post->clearMediaCollection('posts');
+        }
+
+        $result = $post->forceDelete();
+
+        if ($result) {
+            return back()
+                ->with(['success' => 'Delete from trash success']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Delete from trash error']);
+        }
+    }
+
+    /**
+     * Restore post
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function restore(int $id)
+    {
+        $post = Post::withTrashed()->findOrFail($id);
+
+        $result = $post->restore();
+
+        if ($result) {
+            return back()
+                ->with(['success' => 'Restore from trash success']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Restore from trash error']);
         }
     }
 }

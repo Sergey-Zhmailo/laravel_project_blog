@@ -35,6 +35,7 @@ class PostService
             ->where('is_published', '=', true)
             ->where('is_hide', '=', false)
             ->where('published_at', '<', Carbon::now())
+            ->where('deleted_at', '=', null)
             ->paginate($perPage);
 
         return $posts;
@@ -59,6 +60,34 @@ class PostService
         ];
         $user_id = auth('web')->id();
         $posts = Post::query()
+            ->select($columns)
+            ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
+            ->where('user_id', '=', $user_id)
+            ->where('deleted_at', '=', null)
+            ->paginate($perPage);
+
+        return $posts;
+    }
+
+    /**
+     * Get deleted posts by logged user with pagination
+     * @param $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getAllUserDeletedWithPaginate($perPage = null)
+    {
+        $columns = [
+            'id',
+            'category_id',
+            'slug',
+            'title',
+            'image',
+            'excerpt',
+            'published_at',
+            'is_published'
+        ];
+        $user_id = auth('web')->id();
+        $posts = Post::onlyTrashed()
             ->select($columns)
             ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
             ->where('user_id', '=', $user_id)
@@ -113,6 +142,27 @@ class PostService
         if (!$add_image) {
             return back()->withErrors(['msg' => 'Update image error']);
         }
+
+        return true;
+    }
+
+    /**
+     * Save post images
+     * @param string $request_name
+     * @param $post
+     * @return bool
+     */
+    public function savePostImageToLibrary(string $request_name, $post)
+    {
+        $mediaItems = $post->getMedia('posts');
+        if(count($mediaItems) > 0) {
+            $post->clearMediaCollection('posts');
+        }
+
+        $post->addMultipleMediaFromRequest([$request_name])
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('posts');
+            });
 
         return true;
     }

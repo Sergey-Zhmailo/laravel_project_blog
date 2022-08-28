@@ -154,7 +154,8 @@
                                                     class="form-select"
                                                     id="edit-tags"
                                                     name="tag_ids[]"
-                                                    multiple>
+                                                    multiple
+                                                    required>
                                                     @foreach($tags as $tag)
                                                         <option value="{{ $tag->id }}"
                                                                 @if(in_array($tag->id, $post_tags)) selected @endif
@@ -240,13 +241,16 @@
                                                 </div>
                                                 @enderror
                                             </div>
-                                            <div class="image-wrapper py-4">
+                                            <div class="image-wrapper py-4 d-flex gap-1">
                                                 @if($post->getFirstMedia('posts'))
-                                                    <img
-                                                        src="{{ $post->getFirstMediaUrl('posts') }}"
-                                                        class="rounded d-block lh-1 mw-100"
-                                                        alt="..."
-                                                    >
+                                                    @foreach($post->getMedia('posts') as $image)
+                                                        <img
+                                                            src="{{ $image->getUrl
+                                ('post_thumb')  }}"
+                                                            class="rounded d-block"
+                                                            alt="{{ $post->title }}"
+                                                        >
+                                                    @endforeach
                                                 @else
                                                     No image
                                                 @endif

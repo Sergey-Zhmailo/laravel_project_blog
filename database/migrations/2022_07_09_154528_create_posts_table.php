@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->boolean('is_hide')->default('false');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('post_categories');
             $table->index('is_published');

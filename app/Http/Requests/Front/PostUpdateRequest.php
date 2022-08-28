@@ -41,8 +41,13 @@ class PostUpdateRequest extends FormRequest
                 'max:500'
             ],
             'category_id' => [
+                'required',
                 'integer',
                 'exists:post_categories,id'
+            ],
+            'tag_ids' => [
+                'required',
+                'array'
             ],
             'tag_ids.*' => [
                 'integer',

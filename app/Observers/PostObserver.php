@@ -34,6 +34,26 @@ class PostObserver
     }
 
     /**
+     * Handle the Post "deleting" event.
+     * @param Post $post
+     * @return void
+     */
+    public function deleting(Post $post)
+    {
+//        dd(__METHOD__, $post);
+    }
+
+    /**
+     * Handle the Post "deleted" event.
+     * @param Post $post
+     * @return void
+     */
+    public function deleted(Post $post)
+    {
+//        dd(__METHOD__, $post);
+    }
+
+    /**
      * Set published_at field
      * @param Post $post
      * @return void

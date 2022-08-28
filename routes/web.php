@@ -59,7 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('profile', [DashboardController::class, 'index'])->name('profile');
     Route::get('user_posts', [PostController::class, 'index'])->name('user_posts');
+    Route::get('user_posts_trash', [PostController::class, 'trash'])->name('user_posts_trash');
     Route::resource('posts', PostController::class)->names('posts');
+    Route::get('posts/force_delete/{id}', [PostController::class, 'force_delete'])->name('posts.force_delete');
+    Route::get('posts/restore/{id}', [PostController::class, 'restore'])->name('posts.restore');
     Route::post('profile_process', [DashboardController::class, 'profile'])->name('profile_process');
     Route::post('comment_process', [CommentController::class, 'comment_process'])->name('comment_process');
 });
