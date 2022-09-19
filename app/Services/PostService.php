@@ -35,7 +35,7 @@ class PostService
             ->where('is_published', '=', true)
             ->where('is_hide', '=', false)
             ->where('published_at', '<', Carbon::now())
-            ->where('deleted_at', '=', null)
+//            ->where('deleted_at', '=', null)
             ->paginate($perPage);
 
         return $posts;
@@ -63,7 +63,8 @@ class PostService
             ->select($columns)
             ->with(['post_category:id,title,id,slug', 'post_tags:id,title,id,slug', 'comments:post_id,id,user_id,text'])
             ->where('user_id', '=', $user_id)
-            ->where('deleted_at', '=', null)
+//            ->where('deleted_at', '=', null)
+//            ->whereNull('deleted_at')
             ->paginate($perPage);
 
         return $posts;

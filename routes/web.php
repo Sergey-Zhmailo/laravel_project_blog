@@ -55,11 +55,24 @@ Route::middleware('guest')->group(function () {
     Route::post('register_process', [AuthController::class, 'register'])->name('register_process');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'is_banned'])->group(function () {
+    // Admin
+    Route::group([
+        'prefix' => 'admin',
+        'middleware' => 'is_admin',
+        'as' => 'admin.'
+    ], function () {
+        Route::get('users', [App\Http\Controllers\Admin\DashboardController::class, 'users'])->name('users');
+        Route::get('block_user/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'block_user'])->name('block_user');
+        Route::get('unblock_user/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'unblock_user'])->name
+        ('unblock_user');
+    });
+
+    // User
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('profile', [DashboardController::class, 'index'])->name('profile');
     Route::get('user_posts', [PostController::class, 'index'])->name('user_posts');
-    Route::get('user_posts_trash', [PostController::class, 'trash'])->name('user_posts_trash');
+    Route::get('user_posts/trash', [PostController::class, 'trash'])->name('user_posts_trash');
     Route::resource('posts', PostController::class)->names('posts');
     Route::get('posts/force_delete/{id}', [PostController::class, 'force_delete'])->name('posts.force_delete');
     Route::get('posts/restore/{id}', [PostController::class, 'restore'])->name('posts.restore');

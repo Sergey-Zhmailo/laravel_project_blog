@@ -23,11 +23,13 @@ class DatabaseSeeder extends Seeder
         $this->call(PostCategoriesTableSeeder::class);
         $this->call(PostTagsTableSeeder::class);
 
+        $this->call(UsersTableSeeder::class);
         User::factory(11)->create();
         $this->call(PostsTableSeeder::class);
 //        Post::factory(100)->create();
         Comment::factory(20)->create();
 
         $this->call(PostPostTagsTableSeeder::class);
+        $this->call(RoleSeeder::class);
     }
 }

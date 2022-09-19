@@ -100,14 +100,14 @@ class PostController extends Controller
             $image = $post->addMedia($postCreateRequest->file('image'))->toMediaCollection('posts');
         }
 
-        if ($post) {
-            return redirect()->route('posts.edit', $post->id)
-                ->with(['success' => 'Save success']);
-        } else {
+        if (!$post) {
             return back()
                 ->withErrors(['msg' => 'Save Error'])
                 ->withInput();
         }
+
+        return redirect()->route('posts.edit', $post->id)
+            ->with(['success' => 'Save success']);
     }
 
     /**
@@ -219,15 +219,15 @@ class PostController extends Controller
 
         $result = $post->update($data);
 
-        if ($result) {
-            return redirect()
-                ->route('posts.edit', $post->id)
-                ->with(['success' => 'Update success']);
-        } else {
+        if (!$result) {
             return back()
                 ->withErrors(['msg' => 'Update error'])
                 ->withInput();
         }
+
+        return redirect()
+            ->route('posts.edit', $post->id)
+            ->with(['success' => 'Update success']);
     }
 
     /**
@@ -247,13 +247,13 @@ class PostController extends Controller
 //        $result = Post::destroy($id);
         $result = $post->delete($id);
 
-        if ($result) {
-            return back()
-                ->with(['success' => 'Delete success']);
-        } else {
+        if (!$result) {
             return back()
                 ->withErrors(['msg' => 'Delete error']);
         }
+
+        return back()
+            ->with(['success' => 'Delete success']);
     }
 
     /**
@@ -279,20 +279,20 @@ class PostController extends Controller
     {
         $post = Post::withTrashed()->findOrFail($id);
 
-        $mediaItems = $post->getMedia('posts');
-        if (count($mediaItems) > 0) {
-            $post->clearMediaCollection('posts');
-        }
+//        $mediaItems = $post->getMedia('posts');
+//        if (count($mediaItems) > 0) {
+//            $post->clearMediaCollection('posts');
+//        }
 
         $result = $post->forceDelete();
 
-        if ($result) {
-            return back()
-                ->with(['success' => 'Delete from trash success']);
-        } else {
+        if (!$result) {
             return back()
                 ->withErrors(['msg' => 'Delete from trash error']);
         }
+
+        return back()
+            ->with(['success' => 'Delete from trash success']);
     }
 
     /**
@@ -306,12 +306,11 @@ class PostController extends Controller
 
         $result = $post->restore();
 
-        if ($result) {
-            return back()
-                ->with(['success' => 'Restore from trash success']);
-        } else {
+        if (!$result) {
             return back()
                 ->withErrors(['msg' => 'Restore from trash error']);
         }
+        return back()
+            ->with(['success' => 'Restore from trash success']);
     }
 }

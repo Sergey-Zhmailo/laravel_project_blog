@@ -27,6 +27,11 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
+        //TODO Как правильно проверить на бан?
+        if(!User::query()->where('email', '=', $request->validated('email'))->value('status')) {
+            return redirect()->route('home')->withErrors(['msg' => 'Your account is banned!']);
+        }
+
         if (auth('web')->attempt($request->validated())) {
             return redirect('/')->with(['success' => 'Success! Welcome']);
         }
