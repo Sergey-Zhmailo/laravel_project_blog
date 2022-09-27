@@ -16,7 +16,8 @@ class CheckStatus
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->check() || !auth()->user()->status) {
+        if (!auth()->check() || auth()->user()->is_banned) {
+            dd(auth()->user()->is_banned);
             auth()->logout();
             redirect('/')->withErrors(['msg' => 'Your account is banned!']);
         }

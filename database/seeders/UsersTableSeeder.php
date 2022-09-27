@@ -23,8 +23,8 @@ class UsersTableSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => bcrypt('123456'),
                 'remember_token' => Str::random(10),
-                'is_admin' => true,
-                'role_id' => 2
+                'role_id' => 2,
+                'is_blocked' => false
             ],
         ];
 

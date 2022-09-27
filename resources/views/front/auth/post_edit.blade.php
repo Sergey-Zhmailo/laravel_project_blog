@@ -52,7 +52,7 @@
                                       novalidate>
                                     @csrf
                                     @method('PATCH')
-                                    @else
+                            @else
                                         <form action="{{ route('posts.store') }}"
                                               method="post"
                                               class="needs-validation

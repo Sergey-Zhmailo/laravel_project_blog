@@ -30,6 +30,5 @@ class DatabaseSeeder extends Seeder
         Comment::factory(20)->create();
 
         $this->call(PostPostTagsTableSeeder::class);
-        $this->call(RoleSeeder::class);
     }
 }

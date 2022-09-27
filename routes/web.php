@@ -62,10 +62,15 @@ Route::middleware(['auth', 'is_banned'])->group(function () {
         'middleware' => 'is_admin',
         'as' => 'admin.'
     ], function () {
-        Route::get('users', [App\Http\Controllers\Admin\DashboardController::class, 'users'])->name('users');
-        Route::get('block_user/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'block_user'])->name('block_user');
-        Route::get('unblock_user/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'unblock_user'])->name
+        Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'users'])->name('users');
+        Route::get('block_user/{id}', [App\Http\Controllers\Admin\UserController::class, 'block_user'])->name('block_user');
+        Route::get('unblock_user/{id}', [App\Http\Controllers\Admin\UserController::class, 'unblock_user'])->name
         ('unblock_user');
+        Route::get('users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+        Route::post('users/store', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+        Route::get('users/edit/{id}', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+        Route::post('users/update/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+        Route::get('users/delete/{id}', [\App\Http\Controllers\Admin\UserController::class, 'delete'])->name('users.delete');
     });
 
     // User

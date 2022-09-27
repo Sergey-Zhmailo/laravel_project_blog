@@ -14,8 +14,8 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <span>Users</span>
-{{--                            <a href="{{ route('posts.create') }}" type="button" class="btn btn-success">New--}}
-{{--                                post</a>--}}
+                            <a href="{{ route('admin.users.create') }}" type="button" class="btn btn-success">Add new
+                                user</a>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped table-hover">
@@ -37,16 +37,19 @@
                                         <td>{{ $post->name }}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic outlined example">
-{{--                                                Как правильно?--}}
-                                                @if($post->status == 1)
+                                                <a href="{{ route('admin.users.edit', $post->id) }}" type="button"
+                                                   class="btn btn-outline-info">Edit</a>
+                                                @if(!$post->is_blocked)
                                                     <a href="{{ route('admin.block_user', $post->id) }}" type="button"
                                                        class="btn
                                                 btn-outline-danger">Block</a>
                                                 @else
                                                     <a href="{{ route('admin.unblock_user', $post->id) }}" type="button"
                                                        class="btn
-                                                btn-outline-warning">UnBlock</a>
+                                                btn-outline-warning">Unblock</a>
                                                 @endif
+                                                <a href="{{ route('admin.users.delete', $post->id) }}" type="button"
+                                                   class="btn btn-outline-danger">Delete</a>
                                             </div>
                                         </td>
                                     </tr>
