@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Front\LoginRequest;
 use App\Http\Requests\Front\RegisterRequest;
+use App\Models\Role;
 use App\Models\User;
+use App\Notifications\PostPublished;
+use App\Notifications\UserRegistered;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class AuthController extends Controller
 {
@@ -73,6 +77,10 @@ class AuthController extends Controller
             event(new Registered($user));
 
             auth('web')->login($user);
+
+            // Notification
+            $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
+            Notification::send($admins, new UserRegistered($user));
 
             return redirect()
                 ->route('verification.notice')

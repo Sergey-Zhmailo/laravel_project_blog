@@ -31,7 +31,7 @@ class UserUpdateRequest extends FormRequest
                 'min:3'
             ],
             'password' => [
-                'required',
+                'nullable',
                 'confirmed',
                 'min:6'
             ],

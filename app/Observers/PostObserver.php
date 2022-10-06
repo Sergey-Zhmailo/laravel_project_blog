@@ -3,7 +3,13 @@
 namespace App\Observers;
 
 use App\Models\Post;
+use App\Models\Role;
+use App\Models\User;
+use App\Notifications\PostCreated;
+use App\Notifications\PostPublished;
+use App\Notifications\PostUpdated;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class PostObserver
@@ -21,6 +27,16 @@ class PostObserver
         $this->setUser($post);
     }
 
+    public function created(Post $post)
+    {
+        if ($post->is_published) {
+            // Add notification
+            $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
+            Notification::send($admins, new PostCreated($post));
+            Notification::send($admins, new PostPublished($post));
+        }
+    }
+
     /**
      * Handle the Post "updating" event.
      *
@@ -31,6 +47,19 @@ class PostObserver
     {
         $this->setPublishedAt($post);
         $this->setSlug($post);
+    }
+
+    public function updated(Post $post)
+    {
+        // Add notification
+//        $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
+//        Notification::send($admins, new PostUpdated($post));
+
+        if ($post->is_published) {
+            // Add notification
+            $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
+            Notification::send($admins, new PostPublished($post));
+        }
     }
 
     /**

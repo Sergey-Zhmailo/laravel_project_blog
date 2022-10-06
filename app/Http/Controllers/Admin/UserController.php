@@ -13,9 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        //        dd(__METHOD__);
         return view('front.auth.admin_dashboard', [
-
         ]);
     }
 
@@ -90,7 +88,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $userUpdateRequest, int $id)
     {
-
+        //если есть пароль то пересоздать и сохранить
         $this->authorize('update', User::class);
 
         $user = User::query()->find($id);

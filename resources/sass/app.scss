@@ -31,3 +31,17 @@ img {
 //    @include fontm('100px')
 //}
 
+.notifications-wrapper {
+    display: inline-block;
+    margin-right: 25px;
+    .badge {
+        background-color: darkgreen;
+    }
+    svg {
+        line-height: 1;
+        height: 25px;
+        path {
+            fill: darkgreen;
+        }
+    }
+}

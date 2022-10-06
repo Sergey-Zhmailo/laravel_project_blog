@@ -13,6 +13,8 @@
     @if (Route::currentRouteName() == 'admin.dashboard') active @endif">Dashboard</a>
         <a href="{{ route('admin.users') }}" class="list-group-item list-group-item-action
     @if (Route::currentRouteName() == 'admin.users') active @endif">Users</a>
+        <a href="{{ route('admin.notifications') }}" class="list-group-item list-group-item-action
+    @if (Route::currentRouteName() == 'admin.notifications') active @endif">Notifications</a>
     @endcan
 
 </ul>

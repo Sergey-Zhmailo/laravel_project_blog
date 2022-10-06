@@ -71,6 +71,8 @@ Route::middleware(['auth', 'is_banned'])->group(function () {
         Route::get('users/edit/{id}', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
         Route::post('users/update/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
         Route::get('users/delete/{id}', [\App\Http\Controllers\Admin\UserController::class, 'delete'])->name('users.delete');
+        Route::get('notifications', [DashboardController::class, 'notifications'])->name('notifications');
+        Route::get('notifications/read/{id}', [DashboardController::class, 'notification_read'])->name('notification_read');
     });
 
     // User

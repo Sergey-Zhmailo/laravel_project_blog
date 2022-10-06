@@ -20,44 +20,48 @@ class DashboardController extends Controller
 
     /**
      * User profile page
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
-//        dd(auth('web')->user()->getFirstMedia('avatars')->getPath('thumb'));
+        //        dd(auth('web')->user()->getFirstMedia('avatars')->getPath('thumb'));
         return view('front.auth.profile');
     }
 
     /**
      * Update user data
-     * @param ProfileRequest $profileRequest
+     *
+     * @param   ProfileRequest  $profileRequest
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function profile(ProfileRequest $profileRequest)
     {
         $result = null;
-        $user = auth('web')->user();
-        $data = $profileRequest->all();
+        $user   = auth('web')->user();
+        $data   = $profileRequest->all();
 
-        if (!$data['password'] && !$data['avatar-image']) {
+        if ( ! $data['password'] && ! $data['avatar-image']) {
             return back()->withErrors(['msg' => 'Update error']);
         }
 
         if ($profileRequest->file('avatar-image')) {
-//            $path = $profileRequest->file('avatar-image')
-//                ->store('avatars', ['disk' => 'public']);
+            //            $path = $profileRequest->file('avatar-image')
+            //                ->store('avatars', ['disk' => 'public']);
 
             if ($user->image != null) {
                 Storage::delete($user->image);
             }
 
-            $result = $user->addMedia($profileRequest->file('avatar-image'))->toMediaCollection('avatars');
+            $result = $user->addMedia($profileRequest->file('avatar-image'))
+                ->toMediaCollection('avatars');
 
-//            if ($path) {
-//                $result = $user->update(['image' => $path]);
-//            }
+            //            if ($path) {
+            //                $result = $user->update(['image' => $path]);
+            //            }
 
-            if (!$result) {
+            if ( ! $result) {
                 return back()->withErrors(['msg' => 'Update avatar error']);
             }
         }
@@ -65,7 +69,7 @@ class DashboardController extends Controller
         if ($data['password']) {
             $result = $user->update(['password' => bcrypt($data['password'])]);
 
-            if (!$result) {
+            if ( ! $result) {
                 return back()->withErrors(['msg' => 'Update password error']);
             }
         }
@@ -82,7 +86,23 @@ class DashboardController extends Controller
         $posts = $this->postService->getAllUserWithPaginate(6);
 
         return view('front.auth.user_posts', [
-            'posts' => $posts
+            'posts' => $posts,
         ]);
+    }
+
+    public function notifications()
+    {
+        $notifications = auth()->user()->notifications;
+
+        //        dd(auth()->user()->notifications);
+        return view('front.auth.admin_notifications', [
+            'notifications' => $notifications,
+        ]);
+    }
+
+    public function notification_read($id)
+    {
+        auth()->user()->unreadNotifications()->find($id)->markAsRead();
+        return back()->with(['success' => 'Update success']);
     }
 }
