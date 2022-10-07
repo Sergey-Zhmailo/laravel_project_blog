@@ -77,7 +77,7 @@ class AuthController extends Controller
             event(new Registered($user));
 
             auth('web')->login($user);
-
+            logs()->debug('asdasd');
             // Notification
             $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
             Notification::send($admins, new UserRegistered($user));

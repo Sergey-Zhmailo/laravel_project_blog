@@ -9,6 +9,7 @@ use App\Notifications\PostCreated;
 use App\Notifications\PostPublished;
 use App\Notifications\PostUpdated;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
@@ -29,12 +30,16 @@ class PostObserver
 
     public function created(Post $post)
     {
+        // Add notification
+        $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
         if ($post->is_published) {
-            // Add notification
-            $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
-            Notification::send($admins, new PostCreated($post));
+
             Notification::send($admins, new PostPublished($post));
         }
+//        $admins->each(function (User $user) use($post) {
+//            $user->notify(new PostCreated($post));
+//        });
+        Notification::send($admins, new PostCreated($post));
     }
 
     /**
@@ -60,6 +65,9 @@ class PostObserver
             $admins = User::where('role_id', '=', Role::IS_ADMIN)->get();
             Notification::send($admins, new PostPublished($post));
         }
+
+        logs()->debug('post update');
+        Log::error('asdas');
     }
 
     /**
