@@ -18,7 +18,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'posts'], function() {
-    Route::get('/', [\App\Http\Controllers\Api\PostController::class, 'index']);
-    Route::get('/{id}', [\App\Http\Controllers\Api\PostController::class, 'show']);
+Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function() {
+
+    Route::get('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
+
+    Route::group([
+        'prefix' => 'posts'
+    ], function() {
+        Route::get('/', [\App\Http\Controllers\Api\PostController::class, 'index']);
+        Route::get('/{id}', [\App\Http\Controllers\Api\PostController::class, 'show']);
+
+    });
 });
