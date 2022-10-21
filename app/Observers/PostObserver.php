@@ -9,6 +9,7 @@ use App\Notifications\PostCreated;
 use App\Notifications\PostPublished;
 use App\Notifications\PostUpdated;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
@@ -40,6 +41,8 @@ class PostObserver
 //            $user->notify(new PostCreated($post));
 //        });
         Notification::send($admins, new PostCreated($post));
+
+        Cache::forget('posts');
     }
 
     /**

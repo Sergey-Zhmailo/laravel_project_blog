@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Observers\PostObserver;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Pagination\Paginator;
+use Psy\Util\Json;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,5 +42,7 @@ class AppServiceProvider extends ServiceProvider
 //                ->line('Click the button below to verify your email address.')
 //                ->action('Verify Email Address', $url);
 //        });
+//        JsonResource::withoutWrapping();
+        Post::observe(PostObserver::class);
     }
 }

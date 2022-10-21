@@ -31,7 +31,7 @@ class Post extends Model implements HasMedia
         'published_at',
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['published_at', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * User relation
