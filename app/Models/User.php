@@ -30,7 +30,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'password',
         'image',
         'role_id',
-        'is_blocked'
+        'is_blocked',
+        'is_api'
     ];
 
     /**

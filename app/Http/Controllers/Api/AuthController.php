@@ -16,10 +16,16 @@ class AuthController extends Controller
             ->where('email', '=', $request->validated('email'))
             ->first();
 
-        if (! $user || ! Hash::check($request->validated('password'), $user->password)) {
+        if ( ! $user
+             || ! Hash::check($request->validated('password'),
+                $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
+        }
+
+        if ( ! $user->is_api) {
+            return ['msg' => 'Error login'];
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
@@ -29,7 +35,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
+        auth()
+            ->user()
+            ->tokens()
+            ->delete();
 
         return ['message' => 'Logged out'];
     }

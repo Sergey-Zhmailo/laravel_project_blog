@@ -19,6 +19,7 @@ class UserController extends Controller
 
     /**
      * Create new user
+     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -35,6 +36,7 @@ class UserController extends Controller
 
     /**
      * Store new user
+     *
      * @param   \App\Http\Requests\Admin\UserCreateRequest  $userCreateRequest
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -64,6 +66,7 @@ class UserController extends Controller
 
     /**
      * Edit user
+     *
      * @param   int  $id
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -72,7 +75,8 @@ class UserController extends Controller
     {
         $this->authorize('update', User::class);
 
-        $user = User::query()->findOrFail($id);
+        $user = User::query()
+            ->findOrFail($id);
 
         return view('admin.auth.user_edit', [
             'post' => $user,
@@ -81,6 +85,7 @@ class UserController extends Controller
 
     /**
      * Update user
+     *
      * @param   \App\Http\Requests\Admin\UserUpdateRequest  $userUpdateRequest
      * @param   int  $id
      *
@@ -91,14 +96,17 @@ class UserController extends Controller
         //если есть пароль то пересоздать и сохранить
         $this->authorize('update', User::class);
 
-        $user = User::query()->find($id);
+        $user = User::query()
+            ->find($id);
 
-        $data = $userUpdateRequest->validated();
+        $data               = $userUpdateRequest->validated();
+        $data['password']   = bcrypt($userUpdateRequest->validated('password'));
         $data['is_blocked'] = boolval($userUpdateRequest->get('is_published'));
+        $data['is_api']     = boolval($userUpdateRequest->get('is_api'));
 
         $result = $user->update($data);
 
-        if (!$result) {
+        if ( ! $result) {
             return back()
                 ->withErrors(['msg' => 'Update error'])
                 ->withInput();
@@ -111,17 +119,19 @@ class UserController extends Controller
 
     /**
      * Delete user
+     *
      * @param   int  $id
      *
      * @return void
      */
-    public function delete(int $id) {
+    public function delete(int $id)
+    {
         $this->authorize('delete', User::class);
         $user = User::findOrFail($id);
 
         $result = $user->delete($id);
 
-        if (!$result) {
+        if ( ! $result) {
             return back()
                 ->withErrors(['msg' => 'Delete error']);
         }

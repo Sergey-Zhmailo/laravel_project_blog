@@ -24,7 +24,8 @@ class UsersTableSeeder extends Seeder
                 'password' => bcrypt('123456'),
                 'remember_token' => Str::random(10),
                 'role_id' => 2,
-                'is_blocked' => false
+                'is_blocked' => false,
+                'is_api' => true
             ],
         ];
 

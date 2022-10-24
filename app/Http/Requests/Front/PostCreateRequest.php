@@ -24,34 +24,34 @@ class PostCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => [
+            'title'       => [
                 'required',
                 'min:3',
-                'max:200'
+                'max:200',
             ],
-            'slug' => [
-                'max:200'
+            'slug'        => [
+                'max:200',
             ],
-            'content' => [
+            'content'     => [
                 'required',
                 'min:5',
-                'max:10000'
+                'max:10000',
             ],
-            'excerpt' => [
-                'max:500'
+            'excerpt'     => [
+                'max:500',
             ],
             'category_id' => [
                 'integer',
-                'exists:post_categories,id'
+                'exists:post_categories,id',
             ],
-            'tag_ids.*' => [
+            'tag_ids.*'   => [
                 'integer',
-                'exists:post_tags,id'
+                'exists:post_tags,id',
             ],
-            'image' => [
-                'mimes:jpeg,bmp,png',
-                'max:5000'
-            ]
+            'image'       => [
+                'mimes:jpeg,bmp,png,jpg',
+                'max:5000',
+            ],
         ];
     }
 }

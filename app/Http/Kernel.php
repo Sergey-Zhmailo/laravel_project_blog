@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckStatus;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Http\Middleware\IsApiMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -76,5 +77,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'is_admin' => IsAdminMiddleware::class,
         'is_banned' => CheckStatus::class,
+        'is_api' => IsApiMiddleware::class,
     ];
 }

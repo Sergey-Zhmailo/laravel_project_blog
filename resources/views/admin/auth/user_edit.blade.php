@@ -94,6 +94,20 @@
                                             >
                                             <label class="form-check-label" for="is_blocked">Is blocked</label>
                                         </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input type="hidden" name="is_api" value="0">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                role="switch"
+                                                id="is_api"
+                                                name="is_api"
+                                                @if($post->is_api)
+                                                    checked
+                                                @endif
+                                            >
+                                            <label class="form-check-label" for="is_api">Is API</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">

@@ -124,6 +124,6 @@ class PostObserver
      */
     protected function setUser(Post $post)
     {
-        $post->user_id = auth('web')->id();
+        $post->user_id = auth()->id();
     }
 }
