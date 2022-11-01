@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PostCreateRequest;
+use App\Http\Requests\Api\PostGetRequest;
 use App\Http\Requests\Api\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
@@ -24,9 +25,8 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(PostGetRequest $request)
     {
-        // Сделать реквест валидацию данных
         //        dd(explode(',', \request()->get('tag_id')));
         //        return PostResource::collection(\Cache::remember('posts', 60*60*24, function () {
         //            return Post::with(['post_category', 'post_tags', 'comments'])->get();
