@@ -24,27 +24,14 @@ class PostTagController extends Controller
             ->first();
 
         if (!$tag) {
-            return redirect('404');
+            abort('404');
         }
 
-        $posts = $tag->posts()
-            ->where('is_published', true)
-            ->where('is_hide', false)
-            ->where('published_at', '<', Carbon::now())
-            ->paginate(6);
+        $posts = $this->getPosts($tag);
 
-        $tags = PostTag::query()
-            ->withCount(['posts' => function (Builder $query) {
-                $query->where('is_published', '=', true)
-                    ->where('is_hide', '=', false);
-            }])
-            ->get();
-        $categories = PostCategory::query()
-            ->withCount(['posts' => function (Builder $query) {
-                $query->where('is_published', '=', true)
-                    ->where('is_hide', '=', false);
-            }])
-            ->get();
+        $tags = $this->getTags();
+
+        $categories = $this->getCategories();
 
         return view('front.tag_show', [
             'tag' => $tag,
@@ -52,5 +39,34 @@ class PostTagController extends Controller
             'categories' => $categories,
             'posts' => $posts
         ]);
+    }
+
+    private function getCategories()
+    {
+        return PostCategory::query()
+            ->withCount(['posts' => function (Builder $query) {
+                $query->where('is_published', '=', true)
+                    ->where('is_hide', '=', false);
+            }])
+            ->get();
+    }
+
+    private function getTags()
+    {
+        return PostTag::query()
+            ->withCount(['posts' => function (Builder $query) {
+                $query->where('is_published', '=', true)
+                    ->where('is_hide', '=', false);
+            }])
+            ->get();
+    }
+
+    private function getPosts(PostTag $tag)
+    {
+        return $tag->posts()
+            ->where('is_published', true)
+            ->where('is_hide', false)
+            ->where('published_at', '<', Carbon::now())
+            ->paginate(6);
     }
 }

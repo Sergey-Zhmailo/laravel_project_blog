@@ -45,10 +45,6 @@ class PostUpdateRequest extends FormRequest
                 'integer',
                 'exists:post_categories,id'
             ],
-            'tag_ids' => [
-                'required',
-                'array'
-            ],
             'tag_ids.*' => [
                 'integer',
                 'exists:post_tags,id'

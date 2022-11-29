@@ -240,11 +240,6 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-//        if ($post->image) {
-//            Storage::delete($post->image);
-//        }
-
-//        $result = Post::destroy($id);
         $result = $post->delete($id);
 
         if (!$result) {

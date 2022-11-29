@@ -25,7 +25,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        //        dd(auth('web')->user()->getFirstMedia('avatars')->getPath('thumb'));
+
         return view('front.auth.profile');
     }
 
@@ -50,16 +50,8 @@ class DashboardController extends Controller
             //            $path = $profileRequest->file('avatar-image')
             //                ->store('avatars', ['disk' => 'public']);
 
-            if ($user->image != null) {
-                Storage::delete($user->image);
-            }
-
             $result = $user->addMedia($profileRequest->file('avatar-image'))
                 ->toMediaCollection('avatars');
-
-            //            if ($path) {
-            //                $result = $user->update(['image' => $path]);
-            //            }
 
             if ( ! $result) {
                 return back()->withErrors(['msg' => 'Update avatar error']);

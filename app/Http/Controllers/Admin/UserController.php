@@ -13,8 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('front.auth.admin_dashboard', [
-        ]);
+        return view('front.auth.admin_dashboard');
     }
 
     /**
@@ -51,17 +50,17 @@ class UserController extends Controller
             'password' => bcrypt($userCreateRequest->validated('password')),
         ]);
 
-        if ($user) {
-            return redirect()
-                ->route('admin.users')
-                ->with([
-                    'success' => 'Success! User was created',
-                ]);
+        if (!$user) {
+            return back()
+                ->withErrors(['msg' => 'Creation error'])
+                ->withInput();
         }
 
-        return back()
-            ->withErrors(['msg' => 'Creation error'])
-            ->withInput();
+        return redirect()
+            ->route('admin.users')
+            ->with([
+                'success' => 'Success! User was created',
+            ]);
     }
 
     /**
@@ -163,11 +162,11 @@ class UserController extends Controller
 
         $result = $user->update(['is_blocked' => true]);
 
-        if ($result) {
-            return back()->with(['success' => 'User blocked']);
-        } else {
+        if (!$result) {
             return back()->withErrors(['msg' => 'User ban error']);
         }
+
+        return back()->with(['success' => 'User blocked']);
     }
 
     public function unblock_user($id)
@@ -179,10 +178,10 @@ class UserController extends Controller
 
         $result = $user->update(['is_blocked' => false]);
 
-        if ($result) {
-            return back()->with(['success' => 'User ublocked']);
-        } else {
+        if ( ! $result) {
             return back()->withErrors(['msg' => 'User unblock error']);
         }
+
+        return back()->with(['success' => 'User ublocked']);
     }
 }
